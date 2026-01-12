@@ -6,56 +6,49 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
+    enum Tab { case stopwatch, logbook }
+    @Namespace var screen
+    @State private var selectedTab: Tab = .stopwatch
 
     var body: some View {
-        NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                    }
-                }
-                .onDelete(perform: deleteItems)
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
+        VStack(spacing: 0) {
+            // Main content area
+            Group {
+                switch selectedTab {
+                case .stopwatch:
+                    StopwatchView()
+                case .logbook:
+                    LogbookView()
                 }
             }
-        } detail: {
-            Text("Select an item")
-        }
-    }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .padding()
 
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
-        }
-    }
+            // Bottom menu bar
+            Divider()
+            GlassEffectContainer {
+                HStack {
+                    MenuButton(title: "Stopwatch", systemImage: "stopwatch", isSelected: selectedTab == .stopwatch) {
+                        selectedTab = .stopwatch
+                    }
+                    .glassEffect()
+                    .glassEffectUnion(id: 1, namespace: screen)
 
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
+                    MenuButton(title: "Logbook", systemImage: "list.bullet", isSelected: selectedTab == .logbook) {
+                        selectedTab = .logbook
+                    }
+                    .glassEffect()
+                    .glassEffectUnion(id: 1, namespace: screen)
+                }
             }
+            .padding(.horizontal, 24)
+            .padding(.vertical, 12)
         }
     }
 }
 
 #Preview {
     ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
 }
