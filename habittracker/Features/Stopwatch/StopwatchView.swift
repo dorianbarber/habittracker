@@ -44,23 +44,7 @@ struct StopwatchView: View {
                 Spacer()
                 
                 if model.elapsedSeconds > 0 {
-                    Button {
-                        addToLogbook()
-                    } label: {
-                        HStack(spacing: 8) {
-                            Image(systemName: "plus.circle.fill")
-                            Text("Add to Logbook")
-                                .fontWeight(.semibold)
-                        }
-                        .font(.headline)
-                        .padding(.vertical, 12)
-                        .frame(maxWidth: .infinity)
-                        .background(Color.blue.opacity(0.15))
-                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel("Add elapsed time to logbook")
-                    .padding(.horizontal, 20)
+                    SaveActivityButton(elapsedSeconds: model.elapsedSeconds)
                 }
             }
             Spacer()
@@ -73,12 +57,6 @@ struct StopwatchView: View {
         let mins = (seconds % 3600) / 60
         let secs = seconds % 60
         return String(format: "%02d:%02d:%02d", hrs, mins, secs)
-    }
-
-    private func addToLogbook() {
-        // TODO: Implement logbook integration. For now, this is a placeholder.
-        // Example: present a sheet or call into a view model method to save the entry.
-        // print("Add to Logbook tapped with elapsed seconds: \(model.elapsedSeconds)")
     }
 }
 

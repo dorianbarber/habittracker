@@ -6,11 +6,13 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
     enum Tab { case stopwatch, logbook }
     @Namespace var screen
     @State private var selectedTab: Tab = .stopwatch
+    @Environment(\.modelContext) private var modelContext
 
     var body: some View {
         VStack(spacing: 0) {
@@ -45,6 +47,9 @@ struct ContentView: View {
             }
             .padding(.horizontal, 24)
             .padding(.vertical, 12)
+        }
+        .onAppear {
+            print("ContentView modelContext: \(modelContext)")
         }
     }
 }

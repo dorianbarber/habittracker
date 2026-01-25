@@ -29,6 +29,9 @@ final class StopwatchViewModel: ObservableObject {
     private func start() {
         guard !isRunning else { return }
         isRunning = true
+        if (elapsedSeconds == 0) {
+            elapsedSeconds = 1
+        }
         lastTick = .now
         tickingTask = Task { [weak self] in
             guard let self else { return }
