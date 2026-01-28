@@ -31,9 +31,10 @@ struct MenuButton: View {
 }
 
 #Preview {
-    VStack(spacing: 16) {
+    HStack(spacing: 16) {
         MenuButton(title: "Stopwatch", systemImage: "stopwatch", isSelected: true) {}
         MenuButton(title: "Logbook", systemImage: "list.bullet", isSelected: false) {}
+        MenuButton(title: "Activities", systemImage: "person", isSelected: false) {}
     }
     .padding()
 }

@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    enum Tab { case stopwatch, logbook }
+    enum Tab { case stopwatch, logbook, activities}
     @Namespace var screen
     @State private var selectedTab: Tab = .stopwatch
     @Environment(\.modelContext) private var modelContext
@@ -23,6 +23,8 @@ struct ContentView: View {
                     StopwatchView()
                 case .logbook:
                     LogbookView()
+                case .activities:
+                    ActivitiesView()
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -38,8 +40,14 @@ struct ContentView: View {
                     .glassEffect()
                     .glassEffectUnion(id: 1, namespace: screen)
 
-                    MenuButton(title: "Logbook", systemImage: "list.bullet", isSelected: selectedTab == .logbook) {
+                    MenuButton(title: "Logs", systemImage: "list.bullet", isSelected: selectedTab == .logbook) {
                         selectedTab = .logbook
+                    }
+                    .glassEffect()
+                    .glassEffectUnion(id: 1, namespace: screen)
+                    
+                    MenuButton(title: "Activities", systemImage: "person", isSelected: selectedTab == .activities) {
+                        selectedTab = .activities
                     }
                     .glassEffect()
                     .glassEffectUnion(id: 1, namespace: screen)
