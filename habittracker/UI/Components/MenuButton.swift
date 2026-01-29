@@ -18,7 +18,7 @@ struct MenuButton: View {
         Button(action: action) {
             HStack(spacing: 8) {
                 Image(systemName: systemImage)
-//                Text(title)
+                Text(title)
             }
             .font(.headline)
             .padding(.horizontal, 12)
