@@ -11,10 +11,12 @@ import SwiftData
 struct SaveActivityButton: View {
     @Environment(\.modelContext) private var modelContext
     let elapsedSeconds: Int
+    var onSaved: (() -> Void)? = nil
     
     var body: some View {
         Button {
             addToLogbook()
+            onSaved?()
         } label: {
             HStack(spacing: 8) {
                 Image(systemName: "plus.circle.fill")
@@ -40,7 +42,7 @@ struct SaveActivityButton: View {
 
 #Preview {
     VStack(spacing: 16) {
-        SaveActivityButton(elapsedSeconds: 123)
+        SaveActivityButton(elapsedSeconds: 123, onSaved: {})
     }
     .padding()
 }

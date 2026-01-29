@@ -15,19 +15,7 @@ struct LogbookView: View {
     var body: some View {
         List(activities) { activity in
             VStack(alignment: .leading, spacing: 4) {
-                HStack {
-                    Text(timeString(activity.elapsedSeconds))
-                        .font(.headline)
-                    if let label = activity.label, !label.isEmpty {
-                        Text(label)
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
-                    Spacer()
-                    Text(activity.date, style: .date)
-                        .font(.caption)
-                        .foregroundStyle(.tertiary)
-                }
+                LogbookRow(activity: activity)
                 if let notes = activity.notes, !notes.isEmpty {
                     Text(notes)
                         .font(.footnote)

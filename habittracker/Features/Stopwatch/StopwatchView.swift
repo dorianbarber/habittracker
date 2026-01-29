@@ -44,7 +44,9 @@ struct StopwatchView: View {
                 Spacer()
                 
                 if model.elapsedSeconds > 0 {
-                    SaveActivityButton(elapsedSeconds: model.elapsedSeconds)
+                    SaveActivityButton(elapsedSeconds: model.elapsedSeconds) {
+                        model.reset()
+                    }
                 }
             }
             Spacer()
