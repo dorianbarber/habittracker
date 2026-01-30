@@ -15,7 +15,7 @@ struct LogbookView: View {
     var body: some View {
         List(activities) { activity in
             VStack(alignment: .leading, spacing: 4) {
-                LogbookRow(activity: activity)
+                LogbookRowView(activity: activity)
                 if let notes = activity.notes, !notes.isEmpty {
                     Text(notes)
                         .font(.footnote)
