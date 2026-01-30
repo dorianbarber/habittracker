@@ -34,6 +34,7 @@ struct LogbookRowView: View {
         .buttonStyle(.plain)
         .sheet(isPresented: $isPresentingSheet) {
             ActivityDetailSheet(activity: activity)
+                .presentationDetents([.large])
         }
     }
     
@@ -50,10 +51,15 @@ struct ActivityDetailSheet: View {
 
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    
+    @Query(sort: \Tag.tag, order: .forward) private var tags:
+        [Tag]
 
     @State private var editedLabel: String = ""
     @State private var editedNotes: String = ""
-    @State private var editedTag: String = ""
+    @State private var selectedTag: Tag?
+    @State private var isPresentingNewTag = false
+    @State private var newTagText = ""
 
     var body: some View {
         NavigationStack {
@@ -63,7 +69,21 @@ struct ActivityDetailSheet: View {
                 }
                 Section(header: Text("Details")) {
                     TextField("Label", text: $editedLabel)
-                    TextField("Tag", text: $editedTag)
+                    Picker("Tag", selection: $selectedTag) {
+                        Text("None").tag(Optional<Tag>(nil))
+                        ForEach(tags, id: \.self) { tag in
+                            Text(tag.tag).tag(Optional(tag))
+                        }
+                    }
+                    .pickerStyle(.navigationLink)
+                    .onChange(of: selectedTag) { _, newValue in
+                        // No-op here; the Add New Tag flow is triggered by a separate button below
+                    }
+                    Button {
+                        isPresentingNewTag = true
+                    } label: {
+                        Label("Add New Tag", systemImage: "plus")
+                    }
                     VStack(alignment: .leading) {
                         Text("Notes")
                             .font(.headline)
@@ -101,23 +121,49 @@ struct ActivityDetailSheet: View {
                         .disabled(!canSave())
                 }
             }
+            .sheet(isPresented: $isPresentingNewTag) {
+                NavigationStack {
+                    Form {
+                        TextField("New tag name", text: $newTagText)
+                    }
+                    .navigationTitle("New Tag")
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button("Cancel") { isPresentingNewTag = false; newTagText = "" }
+                        }
+                        ToolbarItem(placement: .confirmationAction) {
+                            Button("Add") {
+                                let trimmed = newTagText.trimmingCharacters(in: .whitespacesAndNewlines)
+                                guard !trimmed.isEmpty else { return }
+                                let newTag = Tag(tag: trimmed)
+                                modelContext.insert(newTag)
+                                do { try modelContext.save() } catch { print("Failed to save new tag: \(error)") }
+                                selectedTag = newTag
+                                newTagText = ""
+                                isPresentingNewTag = false
+                            }
+                            .disabled(newTagText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                        }
+                    }
+                }
+            }
         }
         .onAppear {
             editedLabel = activity.label ?? ""
             editedNotes = activity.notes ?? ""
-            editedTag = activity.tag ?? ""
+            selectedTag = activity.tag
         }
         .presentationDetents([.medium, .large])
     }
     
     private func canSave() -> Bool{
-        return editedLabel.isEmpty == false || editedNotes.isEmpty == false || editedTag.isEmpty == false
+        return editedLabel.isEmpty == false || editedNotes.isEmpty == false || selectedTag != activity.tag
     }
 
     private func saveChanges() {
         activity.label = editedLabel.isEmpty ? nil : editedLabel
         activity.notes = editedNotes.isEmpty ? nil : editedNotes
-        activity.tag = editedTag.isEmpty ? nil : editedTag
+        activity.tag = selectedTag
         do {
             try modelContext.save()
         } catch {
@@ -145,13 +191,13 @@ struct ActivityDetailSheet: View {
 }
 
 #Preview("Logbook Row - With Label") {
-    let sample = Activity(elapsedSeconds: 3723, label: "Morning Run", notes: "Felt great today", date: Date(), tag: "fitness")
+    let sample = Activity(elapsedSeconds: 3723, label: "Morning Run", notes: "Felt great today", date: Date(), tag: Tag(tag: "Fitness"))
     return LogbookRowView(activity: sample)
         .padding()
 }
 
 #Preview("Activity Detail Sheet - Editing") {
-    let sample = Activity(elapsedSeconds: 5400, label: "Study Session", notes: "Read chapters 3-4", date: Date(), tag: "learning")
+    let sample = Activity(elapsedSeconds: 5400, label: "Study Session", notes: "Read chapters 3-4", date: Date(), tag: Tag(tag: "Reading"))
     return ActivityDetailSheet(activity: sample)
 }
 

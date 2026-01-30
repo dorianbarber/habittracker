@@ -14,6 +14,7 @@ struct habittrackerApp: App {
         let schema = Schema([
             Item.self,
             Activity.self,
+            Tag.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 

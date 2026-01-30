@@ -14,9 +14,9 @@ class Activity {
     var label: String?
     var notes: String?
     var date: Date
-    var tag: String?
+    var tag: Tag?
 
-    init(elapsedSeconds: Int, label: String? = nil, notes: String? = nil, date: Date = Date(), tag: String? = nil) {
+    init(elapsedSeconds: Int, label: String? = nil, notes: String? = nil, date: Date = Date(), tag: Tag? = nil) {
         self.elapsedSeconds = elapsedSeconds
         self.label = label
         self.notes = notes
