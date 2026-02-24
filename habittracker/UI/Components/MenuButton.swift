@@ -16,14 +16,19 @@ struct MenuButton: View {
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 8) {
+            VStack(spacing: 8) {
                 Image(systemName: systemImage)
+                    .foregroundStyle(.primary)
+                    .font(.headline.bold())
                 Text(title)
+                    .foregroundStyle(.primary)
+                    .font(.footnote)
             }
-            .font(.headline)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
-            .glassEffect(isSelected ? Glass.regular.tint(Color.green).interactive() : Glass.clear)
+            .padding(.horizontal, 15)
+            .padding(.vertical, 15)
+            .frame(minWidth: 100)
+            .background(isSelected ? Color(white: 0.92) : Color.clear)
+            .clipShape(RoundedRectangle(cornerRadius: 30))
         }
         .buttonStyle(.plain)
         .accessibilityAddTraits(isSelected ? .isSelected : [])

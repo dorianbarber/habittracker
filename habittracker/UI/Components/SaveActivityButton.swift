@@ -20,13 +20,15 @@ struct SaveActivityButton: View {
         } label: {
             HStack(spacing: 8) {
                 Image(systemName: "plus.circle.fill")
+                    .foregroundStyle(.primary)
                 Text("Add to Logbook")
-                    .fontWeight(.semibold)
+                    .font(.body.bold())
+                    .foregroundStyle(.primary)
             }
-            .font(.headline)
-            .padding(.vertical, 12)
+            .font(.body.bold())
+            .padding(.vertical, 10)
             .frame(maxWidth: .infinity)
-            .background(Color.blue.opacity(0.15))
+            .background(Color(white: 0.92))
             .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         }
         .buttonStyle(.plain)

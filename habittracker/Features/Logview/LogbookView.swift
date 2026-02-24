@@ -5,7 +5,6 @@
 //  Created by Dorian Barber on 1/12/26.
 //
 
-
 import SwiftUI
 import SwiftData
 
@@ -21,10 +20,11 @@ struct LogbookView: View {
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
-            }.padding(.vertical, 6)
+            }
+            .padding(.vertical, 4)
+            .listRowBackground(Color(white: 0.98))
         }
         .listStyle(.plain)
-        .padding()
     }
 
     private func timeString(_ seconds: Int) -> String {
@@ -37,4 +37,5 @@ struct LogbookView: View {
 
 #Preview {
     LogbookView()
+        .environment(\.colorScheme, .light)
 }

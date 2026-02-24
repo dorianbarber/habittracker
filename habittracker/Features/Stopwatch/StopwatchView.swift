@@ -17,7 +17,8 @@ struct StopwatchView: View {
                 // Time display in hh:mm:ss
                 Spacer()
                 Text(formattedTime(model.elapsedSeconds))
-                    .font(.system(size: 64, design: .rounded))
+                    .font(.system(size: 38, weight: .bold, design: .monospaced))
+                    .foregroundStyle(.primary)
                     .monospacedDigit()
                 Spacer()
             }
@@ -25,7 +26,7 @@ struct StopwatchView: View {
             VStack {
                 HStack{
                     // Reset Button (left)
-                    CircleActionButton(title: "Reset", color: .gray.opacity(0.15)) {
+                    CircleActionButton(title: "Reset", color: Color.gray.opacity(0.15)) {
                         model.reset()
                     }
                     .accessibilityLabel("Reset timer")
@@ -34,12 +35,12 @@ struct StopwatchView: View {
 
                     // Start / Stop Button (right)
                     CircleActionButton(title: model.isRunning ? "Stop" : "Start",
-                                       color: model.isRunning ? .red.opacity(0.2) : .green.opacity(0.2)) {
+                                       color: model.isRunning ? Color.black.opacity(0.09) : Color.gray.opacity(0.15)) {
                         model.toggle()
                     }
                     .accessibilityLabel(model.isRunning ? "Stop timer" : "Start timer")
                 }
-                .padding(.horizontal, 20)
+                .padding(.horizontal, 14)
 
                 Spacer()
                 

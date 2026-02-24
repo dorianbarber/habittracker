@@ -16,17 +16,18 @@ struct LogbookRowView: View {
         Button {
             isPresentingSheet = true
         } label: {
-            HStack {
+            HStack(spacing: 6) {
                 Text(timeString(activity.elapsedSeconds))
-                    .font(.headline)
+                    .font(.body.bold())
+                    .foregroundStyle(.primary)
                 if let label = activity.label, !label.isEmpty {
                     Text(label)
-                        .font(.subheadline)
+                        .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
                 Spacer()
                 Text(activity.date, style: .date)
-                    .font(.caption)
+                    .font(.caption2)
                     .foregroundStyle(.tertiary)
             }
             .contentShape(Rectangle())
@@ -64,72 +65,103 @@ struct ActivityDetailSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section(header: Text("Time")) {
+                Section(header: Text("Time").font(.footnote.bold())) {
                     Text(timeString(activity.elapsedSeconds))
+                        .font(.body)
+                        .foregroundStyle(.primary)
                 }
-                Section(header: Text("Details")) {
+                .listRowBackground(Color(white: 0.98))
+                
+                Section(header: Text("Details").font(.footnote.bold())) {
                     TextField("Label", text: $editedLabel)
+                        .font(.body)
+                        .foregroundColor(.primary)
                     Picker("Tag", selection: $selectedTag) {
                         Text("None").tag(Optional<Tag>(nil))
+                            .font(.body)
+                            .foregroundColor(.secondary)
                         ForEach(tags, id: \.self) { tag in
-                            Text(tag.tag).tag(Optional(tag))
+                            Text(tag.tag)
+                                .font(.body)
+                                .foregroundColor(.primary)
+                                .tag(Optional(tag))
                         }
                     }
                     .pickerStyle(.navigationLink)
-                    .onChange(of: selectedTag) { _, newValue in
-                        // No-op here; the Add New Tag flow is triggered by a separate button below
-                    }
                     Button {
                         isPresentingNewTag = true
                     } label: {
                         Label("Add New Tag", systemImage: "plus")
+                            .font(.body)
+                            .foregroundColor(.secondary)
                     }
-                    VStack(alignment: .leading) {
+                    VStack(alignment: .leading, spacing: 4) {
                         Text("Notes")
-                            .font(.headline)
+                            .font(.footnote.bold())
+                            .foregroundStyle(.primary)
                         TextEditor(text: $editedNotes)
+                            .font(.body)
+                            .foregroundColor(.primary)
                             .frame(minHeight: 120)
-                            .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.secondary.opacity(0.2)))
+                            .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.gray.opacity(0.15)))
                     }
                 }
-                Section(header: Text("Date")) {
-                    HStack {
+                .listRowBackground(Color(white: 0.98))
+                
+                Section(header: Text("Date").font(.footnote.bold())) {
+                    HStack(spacing: 4) {
                         Text("Date Created")
+                            .font(.body)
+                            .foregroundStyle(.primary)
                         Spacer()
                         Text(activity.date, style: .date)
-                            .foregroundStyle(.secondary)
+                            .font(.caption2)
+                            .foregroundStyle(.tertiary)
                     }
                 }
+                .listRowBackground(Color(white: 0.98))
+                
                 Section() {
                     Button(action: deleteActivity){
                         HStack {
                             Spacer()
                             Text("Delete Activity")
+                                .font(.body)
+                                .foregroundColor(.red)
                             Spacer()
                         }
                     }
                 }
+                .listRowBackground(Color(white: 0.98))
             }
             .navigationTitle("Edit Activity")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Close") { dismiss() }
+                        .font(.body)
+                        .foregroundColor(.primary)
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") { saveChanges() }
                         .disabled(!canSave())
+                        .font(.body)
+                        .foregroundColor(canSave() ? .primary : .secondary)
                 }
             }
             .sheet(isPresented: $isPresentingNewTag) {
                 NavigationStack {
                     Form {
                         TextField("New tag name", text: $newTagText)
+                            .font(.body)
+                            .foregroundColor(.primary)
                     }
                     .navigationTitle("New Tag")
                     .toolbar {
                         ToolbarItem(placement: .cancellationAction) {
                             Button("Cancel") { isPresentingNewTag = false; newTagText = "" }
+                                .font(.body)
+                                .foregroundColor(.primary)
                         }
                         ToolbarItem(placement: .confirmationAction) {
                             Button("Add") {
@@ -143,6 +175,10 @@ struct ActivityDetailSheet: View {
                                 isPresentingNewTag = false
                             }
                             .disabled(newTagText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                            .font(.body)
+                            .foregroundColor(
+                                newTagText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? .secondary : .primary
+                            )
                         }
                     }
                 }
@@ -193,7 +229,7 @@ struct ActivityDetailSheet: View {
 #Preview("Logbook Row - With Label") {
     let sample = Activity(elapsedSeconds: 3723, label: "Morning Run", notes: "Felt great today", date: Date(), tag: Tag(tag: "Fitness"))
     return LogbookRowView(activity: sample)
-        .padding()
+        .padding(6)
 }
 
 #Preview("Activity Detail Sheet - Editing") {
